@@ -2,6 +2,11 @@
 # in Portland, Oregon. This is in addition to publicly available data such as square 
 # footage, lot size, age, elevation, etc. 
 
+# This effort was part of my final project for Geography 597 - Advanced Spatial 
+# Quantitative Analysis (PSU, Winter 2019)
+
+# - Dmitri Kalashnikov
+
 # Derived variable #1 - number of bus stops in neighborhood
 # using data from Metro - RLIS
 require(sp)
