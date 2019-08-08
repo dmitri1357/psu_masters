@@ -70,15 +70,15 @@ for k in range(8):
     lonvec = []
     step = steps[k]
     # calculate interpolation grid
-    for a in np.arange(50,1550,50):
-        for b in np.arange(10,370,10):
+    for a in np.arange(50,1550,50): # 50 km radial increments (rho's)
+        for b in np.arange(10,370,10): # 10 degree azimuth increments (theta's)
             start = geopy.Point(lat,lon) # origin
             circ = geopy.distance.distance(kilometers = a) # great circle distance
             dest = circ.destination(point = start, bearing = b) # transect along great circle
             latvec.append(dest[0])
             lonvec.append(dest[1])
-    latvec = np.hstack([lat, latvec])
-    lonvec = np.hstack([lon, lonvec])
+    latvec = np.hstack([lat, latvec]) # add origin lat
+    lonvec = np.hstack([lon, lonvec]) # add origin lon
     # interpolate underlying values using radial grid
     interp_vals = scipy.interpolate.interpn((merra_lons,merra_lats),z500_ja,(lonvec,latvec))
     del latvec, lonvec
@@ -201,7 +201,7 @@ qv700_500km_mean = np.mean(qv700_500km[:,0:361], axis = 1)
 
 # variables for Random Forest model
 
-# one set of features
+# one set of engineered features
 features = np.vstack([z500_500km_mean,z500_1000km_mean,z500_1500km_mean,
                       z500_500km_ptp,z500_1000km_ptp,z500_1500km_ptp,z500_300km_diff1,
                       z500_300km_diff2,z500_300km_diff3,z500_300km_diff4,z500_400km_diff1,
