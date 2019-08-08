@@ -39,7 +39,7 @@ def birthday_odds(num_people, num_sims):
     for k in range(num_sims):
         crowd = np.empty([num_people])
         for i in range(num_people):
-            person = np.random.randint(1,366)
+            person = np.random.randint(1,366) # 366 possible birthdays
             crowd[i] = person
         dups = pd.Series(crowd)[pd.Series(crowd).duplicated()].values # searching for dups --> 2 birthdays match
         size = np.size(dups) # will have size = 0 unless two birthdays matched
