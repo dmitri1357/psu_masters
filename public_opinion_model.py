@@ -28,11 +28,11 @@ set to 1 or -1, respectively. An initial kurtosis statistic of this population
 was calculated in order to quantify the "peakedness" of this distribution.
 
 2) Following, 10,000 pairwise exchanges of opinions were simulated, with
-opinions i & j randomly drawn from the Laplace distibution. I chose to do this
+opinions i & j randomly drawn from the Laplace distribution. I chose to do this
 sampling with replacement, in order to simulate real-life interactions where
 each person has the freedom to talk to many other people. A new sample of
 20,000 opinions was thus built, and the new kurtosis statistic calculated
-to see if distibution became more "peaked" or platykurtic - a sign of
+to see if distribution became more "peaked" or platykurtic - a sign of
 converging opinions.
 
 3) A Monte Carlo simulation of above procedure was performed n = 1,000 times.
