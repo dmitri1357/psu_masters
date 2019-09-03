@@ -99,8 +99,8 @@ points = (x,y) # these are the points at which underlying grid will be interpola
 
 # since runtime of following interpolation varies greatly based on input dims, I wanted my program
 # to notify me when it has finished running. Text message via Twilio was my solution.
-account_SID = 'AC4f0bc4b74c65ca21fdf5b66c24845885'
-auth_token = 'dd84625acf5a8d565fb4ed82356c1d13'
+account_SID = 'removed for security reasons'
+auth_token = 'removed for security reasons'
 twilio_cli = Client(account_SID, auth_token)
 twilio_num = '+19712564892' # my twilio number
 my_cell = '+15039296502' # my cell number
