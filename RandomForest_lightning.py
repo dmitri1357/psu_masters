@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Aug  5 15:30:58 2019
-
-@author: dmitri4
-"""
-
 # Random Forest Model for lightning prediction
 import numpy as np
 import geopy
@@ -15,14 +8,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
 import pandas as pd
 
-'''
+"""
 This code is exploratory work from my Master's thesis at PSU, attempting
 to predict lightning days in interior Pacific Northwest using meteorological
 variables. Binary classification (1 = lightning, 0 = no lightning) using Random
 Forest Classifier.
 
 -Dmitri Kalashnikov
-'''
+"""
 
 # import meteorological variables
 z500_ja = np.load('z500_ja.npy')
