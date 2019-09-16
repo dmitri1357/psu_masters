@@ -1,16 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep  3 11:36:36 2019
-
-@author: dmitri4
-"""
-
 import numpy as np
 import gzip
 from scipy.interpolate import griddata
 from twilio.rest import Client
+from tqdm import tqdm
 
-'''
+"""
 This code is exploratory work from my Master's thesis at PSU, attempting
 to predict lightning days in interior Pacific Northwest using meteorological
 variables.
@@ -22,7 +16,7 @@ circle using polar coordinates in order to normalize distances around each
 data point.
 
 -Dmitri Kalashnikov
-'''
+"""
 
 # variables are 14880 x 756
 with gzip.open('z500_deps_2deg_dups.npy.gz', 'rb') as f: # Geopotential heights
@@ -107,7 +101,7 @@ my_cell = '+15039296502' # my cell number
 
 # interpolating values onto square meshgrid (the 'image') for input to 2D CNN model
 regrid_vals_scaled = np.empty([104160,40,40])
-for k in range(104160):
+for k in tqdm(range(104160)): # tqdm wrapper to show progress bar in console
     values = all_vals[k,:,:]
     values = np.reshape(values, (756))
     regrid_vals_scaled[k,:,:] = griddata(points, values, (grid_x, grid_y), method='linear')
