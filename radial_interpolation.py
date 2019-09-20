@@ -1,6 +1,6 @@
 """
 The following is a tool I wrote to interpolate and extract geospatial data
-using a unit circle of specified radius and azimuth resolution.
+using a unit circle of specified radius and degree resolution.
 
 This method returns a vector of values referenced to a polar coordinate grid,
 centered around the latitude/longitude point of interest.
