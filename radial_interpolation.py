@@ -70,6 +70,5 @@ def radial_interp(array, array_lats, array_lons, latvec, lonvec):
     """
 
     interp_vals = si.interpn((array_lons,array_lats),array,(lonvec,latvec))
-
     return interp_vals
 
