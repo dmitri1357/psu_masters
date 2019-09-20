@@ -25,8 +25,8 @@ def radial_interp(array, array_latmin, array_latmax, array_latstep,
     array_latmin = southern latitude extent of input data array
     array_latmax = northern latitude extent of input data array
     array_latstep = latitudinal resolution (in degrees) of input data array
-    array_lonmin = western latitude extent of input data array
-    array_lonmax = eastern latitude extent of input data array
+    array_lonmin = western longitude extent of input data array
+    array_lonmax = eastern longitude extent of input data array
     array_lonstep = longitudinal resolution (in degrees) of input data array
 
     interp_centerlat = central latitude point around which the unit circle interpolator will be built
