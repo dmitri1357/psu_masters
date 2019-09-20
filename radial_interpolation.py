@@ -67,7 +67,6 @@ def radial_interp(array, array_lats, array_lons, latvec, lonvec):
     """
     array = 2D input array of values from which to interpolate (data should be spatial
             and continuous on a regular grid, e.g. raster, reanalysis, climate model output, etc)
-
     """
 
     interp_vals = si.interpn((array_lons,array_lats),array,(lonvec,latvec))
