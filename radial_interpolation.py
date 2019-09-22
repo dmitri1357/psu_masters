@@ -25,7 +25,14 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
                        will be built
     interp_centerlon = longitude defining origin around which the unit circle interpolator
                        will be built
-    start_radius = radius distance in km (from origin) of first (innermost) interpolation ring
+    start_radius = radius distance in km (from origin) of first (innermost) interpolation ring.
+                   If start_radius = 0, interpolation at origin and at 0 degree azimuth
+                   will be duplicated in order to produce a continous contourf plot for visualization.
+                   If start_radius is set to any value higher than zero, both the origin and
+                   0 degree azimuth will be interpolated only once. Use this version if computing
+                   spatial statistics as all interpolation points will be unique. Use version
+                   with start_radius = 0 for plotting, as otherwise the plot will show no values
+                   around center and in a vertical slice at 0 degrees from center.
     radius_step = radius distance in km between each interpolation ring
     end_radius = radius distance in km (from origin) of last (outermost) interpolation ring;
                this distance defines the radius of the full circle and the outer edge of
@@ -39,18 +46,40 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
         radial grid
     """
 
-    radius_increments = np.arange(start_radius,end_radius+1,radius_step)
-    degree_increments = np.arange(0+degree_resolution,360+1,degree_resolution)
-    interp_lats = []
-    interp_lons = []
+    if start_radius == 0:
 
-    for km in radius_increments:
-        for deg in degree_increments:
-            start = geopy.Point(interp_centerlat,interp_centerlon)
-            transect = gd.distance(kilometers = km)
-            dest = transect.destination(point = start, bearing = deg)
-            interp_lats.append(dest[0])
-            interp_lons.append(dest[1])
+        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
+        degree_increments = np.arange(0,360+1,degree_resolution)
+        interp_lats = []
+        interp_lons = []
+
+        for km in radius_increments:
+            for deg in degree_increments:
+                start = geopy.Point(interp_centerlat,interp_centerlon)
+                transect = gd.distance(kilometers = km)
+                dest = transect.destination(point = start, bearing = deg)
+                interp_lats.append(dest[0])
+                interp_lons.append(dest[1])
+
+    elif start_radius > 0:
+
+        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
+        degree_increments = np.arange(0+degree_resolution,360+1,degree_resolution)
+        interp_lats = []
+        interp_lons = []
+
+        for km in radius_increments:
+            for deg in degree_increments:
+                start = geopy.Point(interp_centerlat,interp_centerlon)
+                transect = gd.distance(kilometers = km)
+                dest = transect.destination(point = start, bearing = deg)
+                interp_lats.append(dest[0])
+                interp_lons.append(dest[1])
+        interp_lats = np.hstack([interp_centerlat, interp_lats])
+        interp_lons = np.hstack([interp_centerlon, interp_lons])
+
+    else:
+        print('radius must be positive value')
 
     interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
     return interp_vals
