@@ -41,18 +41,18 @@ def define_radial_grid(start_radius, radius_step, end_radius, degree_resolution)
     assert start_radius >= 0, "radius must be positive value"
 
     if start_radius == 0:
-        radius_inc = np.arange(start_radius,end_radius+1,radius_step)
-        degree_inc = np.arange(0,360+1,degree_resolution)
+        radius_steps = np.arange(start_radius,end_radius+1,radius_step)
+        degree_steps = np.arange(0,360+1,degree_resolution)
 
     else:
-        radius_inc = np.arange(start_radius,end_radius+1,radius_step)
-        degree_inc = np.arange(0+degree_resolution,360+1,degree_resolution)
+        radius_steps = np.arange(start_radius,end_radius+1,radius_step)
+        degree_steps = np.arange(0+degree_resolution,360+1,degree_resolution)
 
-    return radius_inc, degree_inc
+    return radius_steps, degree_steps
 
 
 def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_centerlon,
-                  radius_inc, degree_inc):
+                  radius_steps, degree_steps):
     """
     array = 2D input array of values from which to interpolate (data should be spatial
             and continuous on a regular grid, e.g. raster, reanalysis, climate model output, etc)
@@ -62,23 +62,23 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
                        will be built
     interp_centerlon = longitude defining origin around which the unit circle interpolator
                        will be built
-    radius_inc = distance (km) between interpolation rings
-    degree_inc = azimuth resolution (degrees) between interpolation points
+    radius_steps = distance (km) between interpolation rings
+    degree_steps = azimuth resolution (degrees) between interpolation points
 
 
     *** Returns vector of interpolated values drawn from input array at every lat,lon point on
         radial grid
     """
 
-    assert radius_inc[0] >= 0, "starting radius must not be negative"
+    assert radius_steps[0] >= 0, "starting radius must not be negative"
 
     interp_lats = []
     interp_lons = []
 
-    if radius_inc[0] == 0:
+    if radius_steps[0] == 0:
 
-        for km in radius_inc:
-            for deg in degree_inc:
+        for km in radius_steps:
+            for deg in degree_steps:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
@@ -87,8 +87,8 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
 
     else:
 
-        for km in radius_inc:
-            for deg in degree_inc:
+        for km in radius_steps:
+            for deg in degree_steps:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
@@ -98,10 +98,7 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
         interp_lons = np.hstack([interp_centerlon, interp_lons])
 
     interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
-    del interp_lats, interp_lons
-
     return interp_vals
-
 
 
 
