@@ -37,20 +37,17 @@ def define_radial_grid(start_radius, radius_step, end_radius, degree_resolution)
         interpolation grid in geographic space
     """
 
-    if start_radius == 0:
+    assert start_radius >= 0, "radius must be positive value"
 
+    if start_radius == 0:
         radius_increments = np.arange(start_radius,end_radius+1,radius_step)
         degree_increments = np.arange(0,360+1,degree_resolution)
-        return radius_increments, degree_increments
-
-    elif start_radius > 0:
-
-        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
-        degree_increments = np.arange(0+degree_resolution,360+1,degree_resolution)
-        return radius_increments, degree_increments
 
     else:
-        print('radius must be positive value')
+        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
+        degree_increments = np.arange(0+degree_resolution,360+1,degree_resolution)
+
+    return radius_increments, degree_increments
 
 
 def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_centerlon,
@@ -72,6 +69,8 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
         radial grid
     """
 
+    assert radius_increments[0] >= 0, "starting radius must not be negative"
+
     interp_lats = []
     interp_lons = []
 
@@ -85,11 +84,7 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
                 interp_lats.append(dest[0])
                 interp_lons.append(dest[1])
 
-        interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
-        del interp_lats, interp_lons
-        return interp_vals
-
-    elif radius_increments[0] > 0:
+    else:
 
         for km in radius_increments:
             for deg in degree_increments:
@@ -101,13 +96,11 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
         interp_lats = np.hstack([interp_centerlat, interp_lats])
         interp_lons = np.hstack([interp_centerlon, interp_lons])
 
-        interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
-        del interp_lats, interp_lons
-        return interp_vals
+    interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
+    del interp_lats, interp_lons
 
-    else:
-        del interp_lats, interp_lons
-        print('radius must be positive value')
+    return interp_vals
+
 
 
 
