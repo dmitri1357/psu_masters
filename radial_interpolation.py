@@ -24,7 +24,8 @@ def define_radial_grid(start_radius, radius_step, end_radius, degree_resolution)
                    spatial statistics as all interpolation points will be unique. Use version
                    with start_radius = 0 for plotting, as otherwise the plot will show no values
                    around center and no values in a vertical slice at 0 degrees from center.
-    radius_step = radius distance in km between each interpolation ring
+    radius_step = radius distance in km between each interpolation ring. When start_radius != 0,
+                  radius_step will be equal to start_radius.
     end_radius = radius distance in km (from origin) of last (outermost) interpolation ring;
                this distance defines the radius of the full circle and the outer edge of
                interpolated values relative to the origin latitude/longitude point (e.g. 2500 km)
@@ -33,25 +34,25 @@ def define_radial_grid(start_radius, radius_step, end_radius, degree_resolution)
                         on each interpolation ring.
 
 
-    *** Returns tuple of polar coordinates (kilometers, degrees) defining the radial
+    *** Returns vectors of polar coordinates (kilometers, degrees) defining the radial
         interpolation grid in geographic space
     """
 
     assert start_radius >= 0, "radius must be positive value"
 
     if start_radius == 0:
-        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
-        degree_increments = np.arange(0,360+1,degree_resolution)
+        radius_inc = np.arange(start_radius,end_radius+1,radius_step)
+        degree_inc = np.arange(0,360+1,degree_resolution)
 
     else:
-        radius_increments = np.arange(start_radius,end_radius+1,radius_step)
-        degree_increments = np.arange(0+degree_resolution,360+1,degree_resolution)
+        radius_inc = np.arange(start_radius,end_radius+1,radius_step)
+        degree_inc = np.arange(0+degree_resolution,360+1,degree_resolution)
 
-    return radius_increments, degree_increments
+    return radius_inc, degree_inc
 
 
 def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_centerlon,
-                  radius_increments, degree_increments):
+                  radius_inc, degree_inc):
     """
     array = 2D input array of values from which to interpolate (data should be spatial
             and continuous on a regular grid, e.g. raster, reanalysis, climate model output, etc)
@@ -61,23 +62,23 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
                        will be built
     interp_centerlon = longitude defining origin around which the unit circle interpolator
                        will be built
-    radius_increments = distance (km) between interpolation rings
-    degree_increments = azimuth resolution (degrees) between interpolation points
+    radius_inc = distance (km) between interpolation rings
+    degree_inc = azimuth resolution (degrees) between interpolation points
 
 
     *** Returns vector of interpolated values drawn from input array at every lat,lon point on
         radial grid
     """
 
-    assert radius_increments[0] >= 0, "starting radius must not be negative"
+    assert radius_inc[0] >= 0, "starting radius must not be negative"
 
     interp_lats = []
     interp_lons = []
 
-    if radius_increments[0] == 0:
+    if radius_inc[0] == 0:
 
-        for km in radius_increments:
-            for deg in degree_increments:
+        for km in radius_inc:
+            for deg in degree_inc:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
@@ -86,8 +87,8 @@ def radial_interp(array, array_lats, array_lons, interp_centerlat, interp_center
 
     else:
 
-        for km in radius_increments:
-            for deg in degree_increments:
+        for km in radius_inc:
+            for deg in degree_inc:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
