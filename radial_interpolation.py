@@ -127,7 +127,7 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
         interp_lats = np.hstack([interp_centerlat, interp_lats])
         interp_lons = np.hstack([interp_centerlon, interp_lons])
 
-    interp_vals = si.interpn((array_lons,array_lats),array,(interp_lons,interp_lats))
+    interp_vals = si.interpn((a_lons,a_lats),a,(interp_lons,interp_lats))
     return interp_vals
 
 
