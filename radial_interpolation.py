@@ -109,7 +109,6 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
     interp_lons = []
 
     if radius_steps[0] == 0:
-
         for km in radius_steps:
             for deg in degree_steps:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
@@ -119,7 +118,6 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
                 interp_lons.append(dest[1])
 
     else:
-
         for km in radius_steps:
             for deg in degree_steps:
                 start = geopy.Point(interp_centerlat,interp_centerlon)
