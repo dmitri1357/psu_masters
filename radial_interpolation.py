@@ -68,8 +68,8 @@ def define_radial_grid(start_radius, radius_step, end_radius, degree_resolution)
     return radius_steps, degree_steps
 
 
-def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
-                  radius_steps, degree_steps):
+def radial_interp(a, a_lats, a_lons, center_lat, center_lon, radius_steps, degree_steps,
+                  return_coordinates=False):
     """
     A function to interpolate continuous, geographic data using a unit circle centered
     on a geographic (lat, lon) point of interest. This methodology was developed by Loikith
@@ -89,18 +89,23 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
             with 3rd dimension representing time.
     a_lats : Vector of latitude values defining input data array.
     a_lons : Vector of longitude values defining input data array.
-    interp_centerlat : Latitude defining origin around which the unit circle interpolator
+    center_lat : Latitude defining origin around which the unit circle interpolator
                        will be built.
-    interp_centerlon : Longitude defining origin around which the unit circle interpolator
+    center_lon : Longitude defining origin around which the unit circle interpolator
                        will be built.
     radius_steps : Distance (km) between interpolation rings.
     degree_steps : Azimuth resolution (degrees) between interpolation points.
+    return_coordinates : Boolean to indicate whether lat & lon interpolation coordinates 
+                         should be returned, default is "False" for contourf plotting. Set 
+                         to "True" if mapping on geographically projected axes. 
 
     Returns
     -------
     interp_vals :  For 2D input array: returns vector of interpolated values drawn from input
                    array at every (lat,lon) point on radial grid. For 3D input arrary, returns 2D array
                    of (interpolated values, timesteps).
+    interp_lats :  The latitude coordinates of interpolated points.
+    interp_lons :  The longitude coordinates of interpolated points.
     """
 
     assert radius_steps[0] >= 0, "starting radius must not be negative"
@@ -111,7 +116,7 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
     if radius_steps[0] == 0:
         for km in radius_steps:
             for deg in degree_steps:
-                start = geopy.Point(interp_centerlat,interp_centerlon)
+                start = geopy.Point(center_lat,center_lon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
                 interp_lats.append(dest[0])
@@ -120,18 +125,23 @@ def radial_interp(a, a_lats, a_lons, interp_centerlat, interp_centerlon,
     else:
         for km in radius_steps:
             for deg in degree_steps:
-                start = geopy.Point(interp_centerlat,interp_centerlon)
+                start = geopy.Point(center_lat,center_lon)
                 transect = gd.distance(kilometers = km)
                 dest = transect.destination(point = start, bearing = deg)
                 interp_lats.append(dest[0])
                 interp_lons.append(dest[1])
         # Add lat & lon of origin
-        interp_lats = np.hstack([interp_centerlat, interp_lats])
-        interp_lons = np.hstack([interp_centerlon, interp_lons])
+        interp_lats = np.hstack([center_lat, interp_lats])
+        interp_lons = np.hstack([center_lon, interp_lons])
 
     interp_vals = si.interpn((a_lons,a_lats),a,(interp_lons,interp_lats))
-    return interp_vals
 
+    # For mapping on geographic projection, can use the interpolated (lat,lon) values
+    if return_coordinates == True:
+        return interp_vals, interp_lats, interp_lons
+    # For non-projected contourf plot, lat & lon values will not be needed
+    else:
+        return interp_vals
 
 
 
